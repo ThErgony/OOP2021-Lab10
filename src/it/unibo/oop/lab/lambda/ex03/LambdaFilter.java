@@ -6,7 +6,9 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
+import java.util.Arrays;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -34,11 +36,15 @@ public final class LambdaFilter extends JFrame {
 
     private static final long serialVersionUID = 1760990730218643730L;
 
+    private static final String ANY_NON_WORD = "(\\s|\\p{Punct})+";
+
     private enum Command {
         IDENTITY("No modifications", Function.identity()),
         LOWERCASE("Lowercase", s -> s.toLowerCase()),
         COUNT_CHARS("Count chars", s -> Long.toString(s.chars().filter(c -> c != '\n').count())),
-        COUNT_LINE("Count lines", s -> Long.toString(s.chars().filter(c -> c == '\n').count() + 1));
+        COUNT_LINE("Count lines", s -> Long.toString(s.lines().count())),
+        SORTED_WORD("Sorted words", s -> Arrays.stream(s.split(ANY_NON_WORD))
+                                        .sorted().collect(Collectors.joining("\n")));
 
         private final String commandName;
         private final Function<String, String> fun;
